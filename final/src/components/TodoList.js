@@ -23,24 +23,25 @@ const TodoList = () => {
 	});
 
 	const filteredTodos = todos.filter(todo => {
-		return (
-			todo.username.includes(filter.username) &&
-			todo.task_text.includes(filter.task_text) &&
-			todo.email.includes(filter.email)
-		);
-	});
+		const usernameMatch = !filter.username || todo.username.includes(filter.username);
+		const taskTextMatch = !filter.task_text || todo.task_text.includes(filter.task_text);
+		const emailMatch = !filter.email || todo.email.includes(filter.email);
+	  
+		return usernameMatch && taskTextMatch && emailMatch;
+	  });
 
 	const sortedTodos = [...filteredTodos].sort((a, b) => {
-		const fieldA = a[sortBy.field].toLowerCase();
-		const fieldB = b[sortBy.field].toLowerCase();
+		const fieldA = a[sortBy.field]?.toLowerCase() || ''; // Check if property exists, use an empty string as a fallback
+		const fieldB = b[sortBy.field]?.toLowerCase() || ''; // Check if property exists, use an empty string as a fallback
+	  
 		if (fieldA < fieldB) {
-			return sortBy.order === 'asc' ? -1 : 1;
+		  return sortBy.order === 'asc' ? -1 : 1;
 		}
 		if (fieldA > fieldB) {
-			return sortBy.order === 'asc' ? 1 : -1;
+		  return sortBy.order === 'asc' ? 1 : -1;
 		}
 		return 0;
-	});
+	  });
 
 	useEffect(() => {
 		dispatch(getTodosAsync());

@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 export const getTodosAsync = createAsyncThunk(
 	'todos/getTodosAsync',
 	async () => {
-		const resp = await fetch('http://localhost:5000/api');
+		const resp = await fetch('https://backend-flask-todo.onrender.com/api');
 		if (resp.ok) {
 			const todos = await resp.json();
 			return { todos };
@@ -15,7 +15,7 @@ export const getTodosAsync = createAsyncThunk(
 export const addTodoAsync = createAsyncThunk(
 	'todos/addTodoAsync',
 	async (payload) => {
-		const resp = await fetch('http://localhost:5000/api', {
+		const resp = await fetch('https://backend-flask-todo.onrender.com/api', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export const addTodoAsync = createAsyncThunk(
 export const toggleCompleteAsync = createAsyncThunk(
 	'todos/completeTodoAsync',
 	async (payload) => {
-		const resp = await fetch('http://localhost:5000/api/${payload.id}', {
+		const resp = await fetch('https://backend-flask-todo.onrender.com/api/${payload.id}', {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export const toggleCompleteAsync = createAsyncThunk(
 export const deleteTodoAsync = createAsyncThunk(
 	'todos/deleteTodoAsync',
 	async (payload) => {
-		const resp = await fetch('http://localhost:5000/${payload.id}', {
+		const resp = await fetch('https://backend-flask-todo.onrender.com/api/${payload.id}', {
 			method: 'DELETE',
 		});
 
