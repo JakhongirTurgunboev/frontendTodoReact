@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 export const getTodosAsync = createAsyncThunk(
 	'todos/getTodosAsync',
 	async () => {
-		const resp = await fetch('http://localhost:7000/todos');
+		const resp = await fetch('http://localhost:5000/api');
 		if (resp.ok) {
 			const todos = await resp.json();
 			return { todos };
@@ -15,12 +15,15 @@ export const getTodosAsync = createAsyncThunk(
 export const addTodoAsync = createAsyncThunk(
 	'todos/addTodoAsync',
 	async (payload) => {
-		const resp = await fetch('http://localhost:7000/todos', {
+		const resp = await fetch('http://localhost:5000/api', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ title: payload.title }),
+			body: JSON.stringify({ username: payload.username,
+							email: payload.email,
+							task_text: payload.task_text,
+							status: false}),
 		});
 
 		if (resp.ok) {
@@ -33,7 +36,7 @@ export const addTodoAsync = createAsyncThunk(
 export const toggleCompleteAsync = createAsyncThunk(
 	'todos/completeTodoAsync',
 	async (payload) => {
-		const resp = await fetch(`http://localhost:7000/todos/${payload.id}`, {
+		const resp = await fetch('http://localhost:5000/api/${payload.id}', {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
@@ -51,7 +54,7 @@ export const toggleCompleteAsync = createAsyncThunk(
 export const deleteTodoAsync = createAsyncThunk(
 	'todos/deleteTodoAsync',
 	async (payload) => {
-		const resp = await fetch(`http://localhost:7000/todos/${payload.id}`, {
+		const resp = await fetch('http://localhost:5000/${payload.id}', {
 			method: 'DELETE',
 		});
 
@@ -67,15 +70,16 @@ export const todoSlice = createSlice({
 	reducers: {
 		addTodo: (state, action) => {
 			const todo = {
-				id: nanoid(),
-				title: action.payload.title,
-				completed: false,
+				username: action.payload.username,
+				email: action.payload.email,
+				task_text: action.payload.task_text,
+				status: false,
 			};
 			state.push(todo);
 		},
 		toggleComplete: (state, action) => {
 			const index = state.findIndex((todo) => todo.id === action.payload.id);
-			state[index].completed = action.payload.completed;
+			state[index].status = action.payload.status;
 		},
 		deleteTodo: (state, action) => {
 			return state.filter((todo) => todo.id !== action.payload.id);
