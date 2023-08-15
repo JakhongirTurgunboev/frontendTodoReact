@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { nanoid } from 'nanoid';
 
 export const getTodosAsync = createAsyncThunk(
 	'todos/getTodosAsync',
-	async () => {
-		const resp = await fetch('https://backend-flask-todo.onrender.com/api');
+	async (pageNumber) => {
+		const resp = await fetch(`http://127.0.0.1:5000/api?page=${pageNumber}`);
 		if (resp.ok) {
 			const todos = await resp.json();
 			return { todos };
@@ -12,10 +11,34 @@ export const getTodosAsync = createAsyncThunk(
 	}
 );
 
+export const updateTodoAsync = createAsyncThunk(
+	'todos/updateTodoAsync',
+	async ({ id, ...updatedFields }, thunkAPI) => {
+		const state = thunkAPI.getState();
+		const accessToken = state.login.accessToken;
+
+		const resp = await fetch(`http://127.0.0.1:5000/api/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${accessToken}`,
+			},
+			body: JSON.stringify(updatedFields),
+		});
+
+		if (resp.ok) {
+			const todo = await resp.json();
+			return { id, todo };
+		} else {
+			throw new Error('Todo update failed');
+		}
+	}
+);
+
 export const addTodoAsync = createAsyncThunk(
 	'todos/addTodoAsync',
 	async (payload) => {
-		const resp = await fetch('https://backend-flask-todo.onrender.com/api', {
+		const resp = await fetch('http://127.0.0.1:5000/api', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -36,7 +59,7 @@ export const addTodoAsync = createAsyncThunk(
 export const toggleCompleteAsync = createAsyncThunk(
 	'todos/completeTodoAsync',
 	async (payload) => {
-		const resp = await fetch('https://backend-flask-todo.onrender.com/api/${payload.id}', {
+		const resp = await fetch(`http://127.0.0.1:5000/api/${payload.id}`, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
@@ -54,7 +77,7 @@ export const toggleCompleteAsync = createAsyncThunk(
 export const deleteTodoAsync = createAsyncThunk(
 	'todos/deleteTodoAsync',
 	async (payload) => {
-		const resp = await fetch('https://backend-flask-todo.onrender.com/api/${payload.id}', {
+		const resp = await fetch(`http://127.0.0.1:5000/api/${payload.id}`, {
 			method: 'DELETE',
 		});
 
@@ -66,7 +89,7 @@ export const deleteTodoAsync = createAsyncThunk(
 
 export const todoSlice = createSlice({
 	name: 'todos',
-	initialState: [],
+	initialState: {results: []},
 	reducers: {
 		addTodo: (state, action) => {
 			const todo = {
@@ -75,7 +98,7 @@ export const todoSlice = createSlice({
 				task_text: action.payload.task_text,
 				status: false,
 			};
-			state.push(todo);
+			state.results.push(todo);
 		},
 		toggleComplete: (state, action) => {
 			const index = state.findIndex((todo) => todo.id === action.payload.id);
@@ -90,13 +113,17 @@ export const todoSlice = createSlice({
 			return action.payload.todos;
 		},
 		[addTodoAsync.fulfilled]: (state, action) => {
-			state.push(action.payload.todo);
+			state.results.push(action.payload.todo);
 		},
 		[toggleCompleteAsync.fulfilled]: (state, action) => {
 			const index = state.findIndex(
 				(todo) => todo.id === action.payload.todo.id
 			);
 			state[index].completed = action.payload.todo.completed;
+		},
+		[updateTodoAsync.fulfilled]: (state, action) => {
+			const index = state.results.findIndex((todo) => todo.id === action.payload.id);
+			state[index] = action.payload.todo;
 		},
 		[deleteTodoAsync.fulfilled]: (state, action) => {
 			return state.filter((todo) => todo.id !== action.payload.id);
