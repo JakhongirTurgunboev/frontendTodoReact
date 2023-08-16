@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Replace with your API endpoint
-const LOGIN_API_ENDPOINT = 'http://127.0.0.1:5000/api/login';
+const LOGIN_API_ENDPOINT = 'https://backend-flask-fd7d.onrender.com/api/login';
 
 export const loginAsync = createAsyncThunk('login/loginAsync', async (credentials) => {
   const response = await fetch(LOGIN_API_ENDPOINT, {
@@ -29,7 +29,7 @@ export const logoutAsync = createAsyncThunk('login/logoutAsync', async (_, thunk
     }
   
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/logout', {
+      const response = await fetch('https://backend-flask-fd7d.onrender.com/api/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
