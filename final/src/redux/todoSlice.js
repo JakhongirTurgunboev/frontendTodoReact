@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 export const getTodosAsync = createAsyncThunk(
 	'todos/getTodosAsync',
 	async (pageNumber) => {
-		const resp = await fetch(`http://127.0.0.1:5000/api?page=${pageNumber}`);
+		const resp = await fetch(`https://backend-flask-fd7d.onrender.com/api?page=${pageNumber}`);
 		if (resp.ok) {
 			const todos = await resp.json();
 			return { todos };
@@ -17,7 +17,7 @@ export const updateTodoAsync = createAsyncThunk(
 		const state = thunkAPI.getState();
 		const accessToken = state.login.accessToken;
 
-		const resp = await fetch(`http://127.0.0.1:5000/api/${id}`, {
+		const resp = await fetch(`https://backend-flask-fd7d.onrender.com/api/${id}`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export const updateTodoAsync = createAsyncThunk(
 export const addTodoAsync = createAsyncThunk(
 	'todos/addTodoAsync',
 	async (payload) => {
-		const resp = await fetch('http://127.0.0.1:5000/api', {
+		const resp = await fetch('https://backend-flask-fd7d.onrender.com/api', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const addTodoAsync = createAsyncThunk(
 export const toggleCompleteAsync = createAsyncThunk(
 	'todos/completeTodoAsync',
 	async (payload) => {
-		const resp = await fetch(`http://127.0.0.1:5000/api/${payload.id}`, {
+		const resp = await fetch(`https://backend-flask-fd7d.onrender.com/api/${payload.id}`, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ export const toggleCompleteAsync = createAsyncThunk(
 export const deleteTodoAsync = createAsyncThunk(
 	'todos/deleteTodoAsync',
 	async (payload) => {
-		const resp = await fetch(`http://127.0.0.1:5000/api/${payload.id}`, {
+		const resp = await fetch(`https://backend-flask-fd7d.onrender.com/api/${payload.id}`, {
 			method: 'DELETE',
 		});
 
