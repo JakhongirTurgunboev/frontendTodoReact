@@ -10,7 +10,7 @@ const TodoList = () => {
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todos);
   const accessToken = useSelector(selectAccessToken);
-
+  console.log(accessToken);
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {

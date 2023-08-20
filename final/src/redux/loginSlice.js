@@ -2,7 +2,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Replace with your API endpoint
-const LOGIN_API_ENDPOINT = 'https://backend-flask-fd7d.onrender.com/api/login';
+const LOGIN_API_ENDPOINT = 'http://127.0.0.1:5000/api/login';
+
+const ACCESS_TOKEN_KEY = 'accessToken';
 
 export const loginAsync = createAsyncThunk('login/loginAsync', async (credentials) => {
   const response = await fetch(LOGIN_API_ENDPOINT, {
@@ -14,11 +16,12 @@ export const loginAsync = createAsyncThunk('login/loginAsync', async (credential
   });
   if (response.ok) {
     const data = await response.json();
+    localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
     return data.access_token;
   } else {
     throw new Error('Login failed');
   }
-});
+  });
 
 export const logoutAsync = createAsyncThunk('login/logoutAsync', async (_, thunkAPI) => {
     const state = thunkAPI.getState();
@@ -29,7 +32,7 @@ export const logoutAsync = createAsyncThunk('login/logoutAsync', async (_, thunk
     }
   
     try {
-      const response = await fetch('https://backend-flask-fd7d.onrender.com/api/logout', {
+      const response = await fetch('http://127.0.0.1:5000/api/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,6 +44,7 @@ export const logoutAsync = createAsyncThunk('login/logoutAsync', async (_, thunk
         const data = await response.json();
         throw new Error(data.message || 'Logout failed');
       }
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
   
       return true; // Return a success flag if logout is successful
     } catch (error) {
