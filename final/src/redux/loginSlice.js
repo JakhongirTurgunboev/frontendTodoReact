@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Replace with your API endpoint
-const LOGIN_API_ENDPOINT = 'http://127.0.0.1:5000/api/login';
+const LOGIN_API_ENDPOINT = `https://backend-flask-fd7d.onrender.com/api/login`;
 
 const ACCESS_TOKEN_KEY = 'accessToken';
 
